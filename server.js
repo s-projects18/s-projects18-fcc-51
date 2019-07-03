@@ -28,9 +28,35 @@ var listener = app.listen(process.env.PORT, function () {
   console.log('Your app is listening on port ' + listener.address().port);
 });
 
-// -------------------
+
+// --------- project stuff ----------
+// call with parameter
 app.get("/api/timestamp/:date_string", function (req, res) {
-  let d = new Date(req.params.date_string);
-  console.log( isNaN(Date.parse(req.params.date_string)) )
-  res.json({unixX: d.getTime(), utc:d.toUTCString()});
+  let p = req.params.date_string;
+  let d; // Date
+   
+  // milliseconds? - 1450137600000 
+  if( p==parseInt(p) && p==String(p) ) {
+    d = new Date(parseInt(p));
+  } else {
+    // create date: NO EXCEPTION!
+    d = new Date(p);  
+   
+    // invalid: take d as it is
+    // d.toUTCString() => 'Invalid Date'
+    
+    // alternative: take current date instead of invalid
+    // https://stackoverflow.com/questions/1353684/detecting-an-invalid-date-date-instance-in-javascript
+    /*if( isNaN(Date.parse(p)) ) { 
+      d = new Date();
+    }*/
+  }
+
+  res.json({unix: d.getTime(), utc:d.toUTCString()});
+});
+
+// call without parameter
+app.get("/api/timestamp", function (req, res) {
+  let d = new Date();
+  res.json({unix: d.getTime(), utc:d.toUTCString()});
 });
